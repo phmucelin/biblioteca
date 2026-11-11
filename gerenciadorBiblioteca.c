@@ -69,7 +69,7 @@ void alocaLivros()
 /*Pronto!*/
 void postLivro()
 {
-    if(totalLivros>MAX_LIVROS)
+    if(totalLivros>=MAX_LIVROS)
     {
         printf("Sua biblioteca está lotada!\n");
         return;
@@ -96,8 +96,10 @@ void editLivro()
     printf("Qual nome do livro que voce deseja buscar para editar? ");
     scanf(" %[^\n]", nomeBusca);
     char newName[100];
+    int found = 0;
     for(int i = 0; i<totalLivros; i++){
         if(strcmp(list[i].nomeLivro, nomeBusca) == 0){
+            found = 1;
             printf("Livro encontrado!\n");
             int choice;
             printf("O que voce deseja alterar? 1 - Nome, 2 - Autor, 3 - Ano, 4 - ISBN: ");
@@ -117,43 +119,53 @@ void editLivro()
             default:
                 break;
             }
-        }else{
-            printf("Livro nao encontrado!\n");
-            return;
         }
+    }
+    if(!found){
+        printf("Livro nao encontrado!\n");
+        return;
     }
 }
 /*Pronto*/
 void listarLivros()
 {
-    if(totalLivros==0){
-        printf("Voce nao possui livros em sua lista!\n");
+    if(totalCategorias == 0)
+    {
+        printf("Voce nao possui nenhuma categoria criada.\n");
         return;
     }
-    for(int i=0;i<totalLivros;i++){
-        if(list[i].nomeLivro == "")
-            {
-                continue;
-            }
-        printf("Nome do Livro: %s\nAutor do Livro: %s\nAno do Livro: %s\nISBN: %s\n", list[i].nomeLivro, list[i].autorLivro, list[i].ano, list[i].ISBN);
+    for(int i=0;i<totalCategorias;i++){
+        if(generos[i].totalLivros == 0)
+        {
+            printf("Voce nao possui livros nessa categoria!\n");
+            continue;
+        }
+        printf("\nCategoria: %s\n", generos[i].nomeCategoria);
+        for(int j = 0; j<generos[i].totalLivros; j++ )
+        {
+            printf("Livro: %s\nAno: %s\nAutor: %s\nISBN: %s\n", generos[i].livros[j].nomeLivro, generos[i].livros[j].ano, generos[i].livros[j].autorLivro, generos[i].livros[j].ISBN);
+        }
     }
 }
 /*Pronto*/
 void removeLivro()
 {
-    int found;
+    int found = 0;
     char nomeBuscaDelete[100];
     printf("Qual o nome do livro que voce deseja deletar? ");
     scanf(" %[^\n]", nomeBuscaDelete);
     for(int i=0;i<totalLivros;i++)
         {
             char deleted[] = "";
-            strcpy(list[i].nomeLivro, deleted);
-            strcpy(list[i].ano, deleted);
-            strcpy(list[i].ISBN, deleted);
-            strcpy(list[i].autorLivro, deleted);
-            found = 1;
-            printf("Livro deletado\n");
+            if(strcmp(list[i].nomeLivro, nomeBuscaDelete) == 0)
+            {
+                strcpy(list[i].nomeLivro, deleted);
+                strcpy(list[i].ano, deleted);
+                strcpy(list[i].ISBN, deleted);
+                strcpy(list[i].autorLivro, deleted);
+                found = 1;
+                printf("Livro deletado\n");
+            }
         }
     if(!found)
     {
@@ -169,17 +181,19 @@ void buscaLivro()
         printf("Voce nao possui livros em sua biblioteca!\n");
         return;
     }
-    
+    int found = 0;
     printf("Qual o nome do livro que voce deseja saber as informacoes?");
     scanf(" %[^\n]", bookname);
     for(int i=0;i<totalLivros;i++)
     {
         if(strcmp(list[i].nomeLivro, bookname) == 0){
+            found = 1;
             printf("Nome do Livro: %s\nAutor do Livro: %s\nAno do Livro: %s\nISBN: %s\n", list[i].nomeLivro, list[i].autorLivro, list[i].ano, list[i].ISBN);
-        } else{
-            printf("Livro nao encontrado!\n");
-            return;
-        }
+        } 
+    }
+    if(found == 0){
+        printf("Livro nao encontrado!\n");
+        return;
     }
     
 }
@@ -193,7 +207,7 @@ void salvaLivrosNoTXT()
     }
     for(int i = 0; i<totalLivros;i++)
     {
-        if(list[i].nomeLivro == "")
+        if(strcmp(list[i].nomeLivro, "") == 0)
             {
                 continue;
             }
